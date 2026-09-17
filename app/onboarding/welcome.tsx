@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "../../theme";
-import OnboardingScreenShell from "./onboardingScreenShell";
+import OnboardingScreenShell from "../../components/onboardingScreenShell";
 
 export default function Welcome() {
   const { colors, typography, spacing } = useTheme();

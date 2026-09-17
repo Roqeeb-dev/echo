@@ -1,8 +1,8 @@
 import React from "react";
 import { View, StyleSheet, SafeAreaView, Pressable } from "react-native";
 import { useRouter } from "expo-router";
-import { useTheme } from "../../theme";
-import Button from "../../components/Button";
+import { useTheme } from "../theme";
+import Button from "../components/Button";
 
 interface OnboardingScreenShellProps {
   children: React.ReactNode;

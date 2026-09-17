@@ -2,13 +2,24 @@ import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "../../theme";
-import OnboardingScreenShell from "./onboardingScreenShell";
+import { requestRecordingPermissionsAsync } from "expo-audio";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import OnboardingScreenShell from "../../components/onboardingScreenShell";
 
 export default function Permissions() {
   const { colors, typography, spacing } = useTheme();
   const router = useRouter();
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    // 1. Ask for microphone permission
+    await requestRecordingPermissionsAsync();
+
+    // 2. Ask for notification permission (TODO)
+
+    // 3. Mark onboarding as complete, so it never shows again
+    await AsyncStorage.setItem("hasOnboarded", "true");
+
+    // 4. Replace the stack — no going back into onboarding
     router.replace("/(tabs)/record");
   };
 
@@ -19,7 +30,6 @@ export default function Permissions() {
       onNext={handleNext}
     >
       <View style={styles.centerContent}>
-        {/* Dual Icon Badge (Bell + Mic) */}
         <View
           style={[
             styles.iconRing,
@@ -37,7 +47,6 @@ export default function Permissions() {
           </View>
         </View>
 
-        {/* Heading */}
         <Text
           style={[
             styles.title,
@@ -52,7 +61,6 @@ export default function Permissions() {
           One Last Thing
         </Text>
 
-        {/* Body Text */}
         <Text
           style={[
             styles.subtitle,
