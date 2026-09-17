@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { useTheme } from "../theme";
+import { useTheme } from "../../theme";
 
 export default function Home() {
   const { colors, typography, spacing, radius } = useTheme();

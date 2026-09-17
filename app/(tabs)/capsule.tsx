@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import { useTheme } from "../theme";
+import { useTheme } from "../../theme";
 
 export default function Capsule() {
   const { colors, typography, spacing } = useTheme();
