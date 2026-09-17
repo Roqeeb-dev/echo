@@ -2,56 +2,58 @@ import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useTheme } from "../../theme";
+import OnboardingScreenShell from "./onboardingScreenShell";
 
 export default function Welcome() {
   const { colors, typography, spacing } = useTheme();
   const router = useRouter();
 
   const handleNext = () => {
-    router.push("/howitworks"); // Trigger screen transition here
+    router.push("/onboarding/howItWorks");
   };
 
   return (
-    <View style={styles.centerContent}>
-      {/* Circle Mic Icon */}
-      <View
-        style={[
-          styles.iconRing,
-          { backgroundColor: colors.border, opacity: 0.35 },
-        ]}
-      >
-        <Feather name="mic" size={48} color={colors.accent} />
+    <OnboardingScreenShell activeStep={0} onNext={handleNext}>
+      <View style={styles.centerContent}>
+        <View
+          style={[
+            styles.iconRing,
+            { backgroundColor: colors.border, opacity: 0.35 },
+          ]}
+        >
+          <Feather name="mic" size={48} color={colors.accent} />
+        </View>
+
+        <Text
+          style={[
+            styles.title,
+            {
+              color: colors.text,
+              fontFamily: typography.fontFamily.heading,
+              fontSize: typography.fontSize.heading,
+              fontWeight: typography.fontWeight.bold,
+            },
+          ]}
+        >
+          Welcome to Echo
+        </Text>
+
+        <Text
+          style={[
+            styles.subtitle,
+            {
+              color: colors.textMuted,
+              fontSize: typography.fontSize.body,
+              lineHeight: typography.lineHeight.normal,
+              marginTop: spacing.sm,
+            },
+          ]}
+        >
+          Record a message today. Choose when it unlocks. Let your future self
+          hear it.
+        </Text>
       </View>
-
-      <Text
-        style={[
-          styles.title,
-          {
-            color: colors.text,
-            fontFamily: typography.fontFamily.heading,
-            fontSize: typography.fontSize.heading,
-            fontWeight: typography.fontWeight.bold,
-          },
-        ]}
-      >
-        Welcome to Echo
-      </Text>
-
-      <Text
-        style={[
-          styles.subtitle,
-          {
-            color: colors.textMuted,
-            fontSize: typography.fontSize.body,
-            lineHeight: typography.lineHeight.normal,
-            marginTop: spacing.sm,
-          },
-        ]}
-      >
-        Record a message today. Choose when it unlocks. Let your future self
-        hear it.
-      </Text>
-    </View>
+    </OnboardingScreenShell>
   );
 }
 

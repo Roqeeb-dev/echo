@@ -1,43 +1,56 @@
 import React from "react";
 import { View, StyleSheet, SafeAreaView, Pressable } from "react-native";
-import { Stack } from "expo-router";
+import { useRouter } from "expo-router";
 import { useTheme } from "../../theme";
 import Button from "../../components/Button";
 
-interface OnboardingLayoutProps {
-  activeStep?: number; // 0-indexed: 0, 1, or 2
+interface OnboardingScreenShellProps {
+  children: React.ReactNode;
+  activeStep?: number;
   totalSteps?: number;
   onNext?: () => void;
-  onDotPress?: (index: number) => void;
+  onBack?: () => void;
   nextButtonTitle?: string;
+  onDotPress?: (index: number) => void;
 }
 
-export default function OnboardingLayout({
+export default function OnboardingScreenShell({
+  children,
   activeStep = 0,
   totalSteps = 3,
   onNext,
-  onDotPress,
+  onBack,
   nextButtonTitle = "Next",
-}: OnboardingLayoutProps) {
+  onDotPress,
+}: OnboardingScreenShellProps) {
   const { colors, spacing } = useTheme();
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else if (router.canGoBack()) {
+      router.back();
+    }
+  };
+
+  const showBackButton = activeStep > 0;
 
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.background }]}
     >
-      {/* Screen Content */}
-      <View style={styles.contentContainer}>
-        <Stack screenOptions={{ headerShown: false }} />
-      </View>
+      {/* Dynamic Screen Content */}
+      <View style={styles.contentContainer}>{children}</View>
 
-      {/* Persistent Bottom Bar */}
+      {/* Bottom Actions Section */}
       <View
         style={[
           styles.bottomBar,
           { paddingHorizontal: spacing.lg, paddingBottom: spacing.xl },
         ]}
       >
-        {/* Pagination Dots */}
+        {/* Pagination Indicator */}
         <View style={[styles.paginationContainer, { gap: spacing.xs }]}>
           {Array.from({ length: totalSteps }).map((_, index) => {
             const isActive = index === activeStep;
@@ -61,8 +74,17 @@ export default function OnboardingLayout({
           })}
         </View>
 
-        {/* Action Button */}
+        {/* Primary Action Button */}
         <Button title={nextButtonTitle} onPress={onNext} />
+
+        {showBackButton && (
+          <Button
+            title="Back"
+            variant="ghost"
+            onPress={handleBack}
+            style={{ marginTop: spacing.xs }}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -92,5 +114,14 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     width: 16,
+  },
+  backButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  backText: {
+    textAlign: "center",
   },
 });
