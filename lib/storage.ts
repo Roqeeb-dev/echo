@@ -1,4 +1,4 @@
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface Capsule {
@@ -12,7 +12,7 @@ export interface Capsule {
 }
 
 const CAPSULES_KEY = "ECHO_CAPSULES";
-const AUDIO_DIR = `${FileSystem.Directory}capsules/`;
+const AUDIO_DIR = `${FileSystem.documentDirectory}capsules/`;
 
 // Ensure persistent audio directory exists
 async function ensureDirectoryExists() {
