@@ -1,8 +1,9 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Switch } from "react-native";
 import { useTheme } from "../../theme";
 
 export default function Settings() {
-  const { colors, typography, spacing, radius } = useTheme();
+  const { colors, typography, spacing, radius, isDark, toggleTheme } =
+    useTheme();
   const styles = createStyles(colors, typography, spacing, radius);
 
   return (
@@ -15,36 +16,12 @@ export default function Settings() {
         <View style={styles.card}>
           <View style={styles.row}>
             <Text style={styles.rowLabel}>Dark Mode</Text>
-            <Text style={styles.rowValue}>System</Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>Notifications</Text>
-            <Text style={styles.rowValue}>On</Text>
-          </View>
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>Storage Used</Text>
-            <Text style={styles.rowValue}>0 capsules</Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.row}>
-            <Text style={[styles.rowLabel, { color: colors.danger }]}>
-              Clear All Capsules
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>About Echo</Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>Version</Text>
-            <Text style={styles.rowValue}>1.0.0</Text>
+            <Switch
+              value={isDark}
+              onValueChange={toggleTheme}
+              trackColor={{ false: colors.border, true: colors.accent }}
+              thumbColor={colors.card}
+            />
           </View>
         </View>
       </View>
@@ -75,7 +52,6 @@ function createStyles(
     },
     content: {
       paddingHorizontal: spacing.lg,
-      gap: spacing.md,
     },
     card: {
       backgroundColor: colors.card,
@@ -88,21 +64,12 @@ function createStyles(
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      paddingVertical: spacing.md,
+      paddingVertical: spacing.sm,
       paddingHorizontal: spacing.md,
     },
     rowLabel: {
       fontSize: typography.fontSize.body,
       color: colors.text,
-    },
-    rowValue: {
-      fontSize: typography.fontSize.body,
-      color: colors.textMuted,
-    },
-    divider: {
-      height: 1,
-      backgroundColor: colors.border,
-      marginLeft: spacing.md,
     },
   });
 }
