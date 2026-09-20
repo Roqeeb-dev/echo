@@ -1,11 +1,13 @@
-import { useColorScheme } from "react-native";
+import { useThemeStore } from "../store/useThemeStore";
 import { light, dark } from "./colors";
 import { typography } from "./typography";
 import { spacing, radius } from "./spacing";
 
 export function useTheme() {
-  const scheme = useColorScheme();
-  const colors = scheme === "dark" ? dark : light;
+  const isDark = useThemeStore((state) => state.isDark);
+  const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
-  return { colors, typography, spacing, radius };
+  const colors = isDark ? dark : light;
+
+  return { colors, typography, spacing, radius, isDark, toggleTheme };
 }

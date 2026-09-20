@@ -1,9 +1,46 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
+import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useTheme } from "../../theme";
+import { useAudioRecorder } from "../../hooks/useAudioRecorder";
 
-export default function Home() {
+export default function RecordScreen() {
   const { colors, typography, spacing, radius } = useTheme();
   const styles = createStyles(colors, typography, spacing, radius);
+  const router = useRouter();
+
+  const {
+    isRecording,
+    durationMillis,
+    permissionGranted,
+    startRecording,
+    stopRecording,
+  } = useAudioRecorder();
+
+  // Format millisecond duration into MM:SS format
+  const formatTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  const handleRecordToggle = async () => {
+    if (isRecording) {
+      const uri = await stopRecording();
+      if (uri) {
+        // Navigate to save screen passing the audio URI and duration
+        router.push({
+          pathname: "/save-capsule",
+          params: { uri, duration: formatTime(durationMillis) },
+        });
+      }
+    } else {
+      await startRecording();
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -12,12 +49,34 @@ export default function Home() {
       </View>
 
       <View style={styles.content}>
-        <Pressable style={styles.recordButton}>
-          <View style={styles.micIcon} />
+        {!permissionGranted && (
+          <Text style={styles.permissionWarning}>
+            Microphone permission is required to record audio capsules.
+          </Text>
+        )}
+
+        {/* Record Button */}
+        <Pressable
+          style={[
+            styles.recordButton,
+            isRecording && { backgroundColor: colors.danger },
+          ]}
+          onPress={handleRecordToggle}
+        >
+          <Feather
+            name={isRecording ? "square" : "mic"}
+            size={36}
+            color={colors.card}
+          />
         </Pressable>
 
-        <Text style={styles.timer}>00:00</Text>
-        <Text style={styles.instruction}>Tap to start recording</Text>
+        {/* Dynamic Timer */}
+        <Text style={styles.timer}>{formatTime(durationMillis)}</Text>
+
+        {/* Contextual Instructions */}
+        <Text style={styles.instruction}>
+          {isRecording ? "Tap to stop recording" : "Tap to start recording"}
+        </Text>
       </View>
     </View>
   );
@@ -42,6 +101,7 @@ function createStyles(
     headerTitle: {
       fontFamily: typography.fontFamily.heading,
       fontSize: typography.fontSize.heading,
+      fontWeight: typography.fontWeight.bold,
       color: colors.text,
     },
     content: {
@@ -49,6 +109,12 @@ function createStyles(
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: spacing.lg,
+    },
+    permissionWarning: {
+      fontSize: typography.fontSize.xs,
+      color: colors.danger,
+      textAlign: "center",
+      marginBottom: spacing.md,
     },
     recordButton: {
       width: 100,
@@ -63,20 +129,15 @@ function createStyles(
       shadowRadius: 12,
       elevation: 5,
     },
-    micIcon: {
-      width: 28,
-      height: 40,
-      borderRadius: 14,
-      backgroundColor: colors.card,
-    },
     timer: {
       marginTop: spacing.xl,
-      fontSize: typography.fontSize.subheading,
-      color: colors.textMuted,
+      fontSize: typography.fontSize.heading,
+      fontWeight: typography.fontWeight.bold,
+      color: colors.text,
       letterSpacing: typography.letterSpacing.wide,
     },
     instruction: {
-      marginTop: spacing.sm,
+      marginTop: spacing.xs,
       fontSize: typography.fontSize.sm,
       color: colors.textMuted,
     },
