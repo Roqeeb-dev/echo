@@ -73,6 +73,12 @@ export default function TabsLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="save_capsule"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }
